@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
+using EasyShutdown.ViewModel;
 
-namespace EasyShutdown
+namespace EasyShutdown.View
 {
     partial class MainWindow : Window
     {

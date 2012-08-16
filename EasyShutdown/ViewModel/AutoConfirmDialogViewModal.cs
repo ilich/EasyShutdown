@@ -3,7 +3,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Microsoft.Practices.Prism.Commands;
 
-namespace EasyShutdown
+namespace EasyShutdown.ViewModel
 {
     class AutoConfirmDialogViewModal : BaseViewModal
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace EasyShutdown
+namespace EasyShutdown.ViewModel
 {
     abstract class BaseViewModal
     {

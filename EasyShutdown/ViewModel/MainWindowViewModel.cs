@@ -4,8 +4,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using EasyShutdown.Properties;
 using Microsoft.Practices.Prism.Commands;
+using EasyShutdown.View;
 
-namespace EasyShutdown
+namespace EasyShutdown.ViewModel
 {
     class MainWindowViewModel : BaseViewModal
     {
