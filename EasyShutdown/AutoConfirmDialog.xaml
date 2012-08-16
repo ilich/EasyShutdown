@@ -1,0 +1,59 @@
+﻿<Window x:Class="EasyShutdown.AutoConfirmDialog"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        Title="" Height="180" Width="400" ResizeMode="NoResize" 
+        WindowStartupLocation="CenterScreen" Topmost="True"
+        ShowInTaskbar="False" WindowStyle="ToolWindow">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding ClosingWindowCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
+    <Window.Resources>
+        <Style x:Key="TimeLeftLabel" TargetType="{x:Type Label}">
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style x:Key="ActionButton" TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="8" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Width" Value="80" />
+        </Style>
+        <Style x:Key="ActionButtonsStackPanel" TargetType="{x:Type StackPanel}">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="FlowDirection" Value="RightToLeft" />
+            <Setter Property="Background" Value="{x:Static SystemColors.ControlBrush}" />
+        </Style>
+        <Style x:Key="WarningImage" TargetType="{x:Type Image}">
+            <Setter Property="Width" Value="48" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Margin" Value="10" />
+        </Style>
+        <Style x:Key="DialogTextLabel" TargetType="{x:Type Label}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+        
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <Image Source="Images/Warning.png" Style="{StaticResource WarningImage}"/>
+            <Label x:Name="lblDialogText" Style="{StaticResource DialogTextLabel}" />
+        </StackPanel>
+        
+        <Label Grid.Row="1" x:Name="lblTimeLeft" Style="{StaticResource TimeLeftLabel}" Visibility="Collapsed" />
+        
+        <StackPanel Grid.Row="2" Style="{StaticResource ActionButtonsStackPanel}">
+            <Button Style="{StaticResource ActionButton}" IsCancel="True" Command="{Binding NoCommand}">No</Button>
+            <Button Style="{StaticResource ActionButton}" IsDefault="True" Command="{Binding YesCommand}">Yes</Button>
+        </StackPanel>
+    </Grid>
+</Window>

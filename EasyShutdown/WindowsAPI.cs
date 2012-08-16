@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace EasyShutdown
 {
     static class WindowsAPI
     {
+        public const int SE_PRIVILEGE_ENABLED = 0x00000002;
+        public const int TOKEN_QUERY = 0x00000008;
+        public const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
+        public const string SE_SHUTDOWN_NAME = "SeShutdownPrivilege";
+
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ExitWindowsEx(ExitWindows uFlags, 
@@ -31,6 +37,18 @@ namespace EasyShutdown
                                                          string name,
                                                          ref long pluid);
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDesktopWindow();
+        
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetShellWindow();
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern int GetWindowRect(IntPtr hwnd, out RECT rc);
+
         public static void GetShutdownPrivileges()
         {
             TokPriv1Luid tp;
@@ -42,6 +60,32 @@ namespace EasyShutdown
             tp.Attr = SE_PRIVILEGE_ENABLED;
             LookupPrivilegeValue(null, SE_SHUTDOWN_NAME, ref tp.Luid);
             AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        public static bool IsFullScreenMode()
+        {
+            IntPtr hDesktopWnd = GetDesktopWindow();
+            IntPtr hShellWnd = GetShellWindow();
+            IntPtr hWnd = GetForegroundWindow();
+
+            if (hWnd == null || hWnd.Equals(IntPtr.Zero))
+            {
+                return false;
+            }
+
+            // Ignore the Desktop and the Shell windows.
+            if (hWnd.Equals(hDesktopWnd) || hWnd.Equals(hShellWnd))
+            {
+                return false;
+            }
+
+            RECT wndBounds;
+            GetWindowRect(hWnd, out wndBounds);
+            int activeWinHeight = wndBounds.Bottom - wndBounds.Top;
+            int activeWndWidth = wndBounds.Right - wndBounds.Left;
+
+            return activeWinHeight == SystemParameters.PrimaryScreenHeight && 
+                        activeWndWidth == SystemParameters.PrimaryScreenWidth;
         }
 
         [Flags]
@@ -109,9 +153,13 @@ namespace EasyShutdown
             public int Attr;
         }
 
-        public const int SE_PRIVILEGE_ENABLED = 0x00000002;
-        public const int TOKEN_QUERY = 0x00000008;
-        public const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
-        public const string SE_SHUTDOWN_NAME = "SeShutdownPrivilege";
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
     }
 }

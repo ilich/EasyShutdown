@@ -7,8 +7,10 @@ using Microsoft.Practices.Prism.Commands;
 
 namespace EasyShutdown
 {
-    class MainWindowViewModel : DependencyObject
+    class MainWindowViewModel : BaseViewModal
     {
+        private const int TIMEOUT = 10;
+
         public string Username
         {
             get { return string.Format(@"{0}\{1}", Environment.UserDomainName, Environment.UserName); }
@@ -30,18 +32,13 @@ namespace EasyShutdown
 
         public ICommand RestoreWindowPositionCommand { get; private set; }
 
-        public Window View { get; set; }
+        public ICommand CheckFullScreenModeCommand { get; private set; }
 
         public MainWindowViewModel(Window view)
+            : base(view)
         {
-            if (view == null)
-            {
-                throw new ArgumentNullException("view");
-            }
-
-            View = view;
-            
             ExitCommand = new DelegateCommand(Exit);
+            CheckFullScreenModeCommand = new DelegateCommand(CheckFullScreenMode);
             MoveWindowCommand = new DelegateCommand(MoveWindow);
             RestoreWindowPositionCommand = new DelegateCommand(RestoreWindowPosition);
             SaveWindowPositionCommand = new DelegateCommand(SaveWindowPosition);
@@ -56,6 +53,20 @@ namespace EasyShutdown
             ValidateState();
 
             menu.Visibility = menu.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void CheckFullScreenMode()
+        {
+            ValidateState();
+
+            if (WindowsAPI.IsFullScreenMode())
+            {
+                View.Hide();
+            }
+            else
+            {
+                View.Show();
+            }
         }
 
         private void SaveWindowPosition()
@@ -99,7 +110,7 @@ namespace EasyShutdown
             ValidateState();
             SaveWindowPosition();
 
-            MessageBoxResult answer = MessageBox.Show("Do you want to log off?", "EasyShutdown", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            MessageBoxResult answer = AutoConfirmDialog.Show("Do you want to log off?", "EasyShutdown", "Log off", TIMEOUT);
             if (answer == MessageBoxResult.Yes)
             {
                 WindowsAPI.ExitWindowsEx(WindowsAPI.ExitWindows.LogOff, WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
@@ -111,7 +122,7 @@ namespace EasyShutdown
             ValidateState();
             SaveWindowPosition();
 
-            MessageBoxResult answer = MessageBox.Show("Do you want to restart your computer?", "EasyShutdown", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            MessageBoxResult answer = AutoConfirmDialog.Show("Do you want to restart your computer?", "EasyShutdown", "Restart", TIMEOUT);
             if (answer == MessageBoxResult.Yes)
             {
                 WindowsAPI.GetShutdownPrivileges();
@@ -124,19 +135,11 @@ namespace EasyShutdown
             ValidateState();
             SaveWindowPosition();
 
-            MessageBoxResult answer = MessageBox.Show("Do you want to shut down your computer?", "EasyShutdown", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            MessageBoxResult answer = AutoConfirmDialog.Show("Do you want to shut down your computer?", "EasyShutdown", "Shut down", TIMEOUT);
             if (answer == MessageBoxResult.Yes)
             {
                 WindowsAPI.GetShutdownPrivileges();
                 WindowsAPI.ExitWindowsEx(WindowsAPI.ExitWindows.ShutDown, WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
-            }
-        }
-
-        private void ValidateState()
-        {
-            if (View == null)
-            {
-                throw new NullReferenceException("View is not set.");
             }
         }
     }
