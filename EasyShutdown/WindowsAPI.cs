@@ -6,61 +6,10 @@ namespace EasyShutdown
 {
     static class WindowsAPI
     {
-        public const int SE_PRIVILEGE_ENABLED = 0x00000002;
-        public const int TOKEN_QUERY = 0x00000008;
-        public const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
-        public const string SE_SHUTDOWN_NAME = "SeShutdownPrivilege";
-
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool ExitWindowsEx(ExitWindows uFlags, 
-                                                  ShutdownReason dwReason);
-
-        [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
-        public static extern bool AdjustTokenPrivileges(IntPtr htok, 
-                                                          bool disall, 
-                                                          ref TokPriv1Luid newst, 
-                                                          int len, 
-                                                          IntPtr prev, 
-                                                          IntPtr relen);
-
-        [DllImport("kernel32.dll", ExactSpelling = true)]
-        public static extern IntPtr GetCurrentProcess();
-
-        [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
-        public static extern bool OpenProcessToken(IntPtr h, 
-                                                     int acc, 
-                                                     ref IntPtr phtok);
-
-        [DllImport("advapi32.dll", SetLastError = true)]
-        public static extern bool LookupPrivilegeValue(string host, 
-                                                         string name,
-                                                         ref long pluid);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetDesktopWindow();
-        
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetShellWindow();
-        
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern int GetWindowRect(IntPtr hwnd, out RECT rc);
-
-        public static void GetShutdownPrivileges()
-        {
-            TokPriv1Luid tp;
-            IntPtr hproc = GetCurrentProcess();
-            IntPtr htok = IntPtr.Zero;
-            OpenProcessToken(hproc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, ref htok);
-            tp.Count = 1;
-            tp.Luid = 0;
-            tp.Attr = SE_PRIVILEGE_ENABLED;
-            LookupPrivilegeValue(null, SE_SHUTDOWN_NAME, ref tp.Luid);
-            AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
-        }
+        private const int SE_PRIVILEGE_ENABLED = 0x00000002;
+        private const int TOKEN_QUERY = 0x00000008;
+        private const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
+        private const string SE_SHUTDOWN_NAME = "SeShutdownPrivilege";
 
         public static bool IsFullScreenMode()
         {
@@ -84,12 +33,83 @@ namespace EasyShutdown
             int activeWinHeight = wndBounds.Bottom - wndBounds.Top;
             int activeWndWidth = wndBounds.Right - wndBounds.Left;
 
-            return activeWinHeight == SystemParameters.PrimaryScreenHeight && 
+            return activeWinHeight == SystemParameters.PrimaryScreenHeight &&
                         activeWndWidth == SystemParameters.PrimaryScreenWidth;
         }
 
+        public static void Logoff()
+        {
+            ExitWindowsEx(WindowsAPI.ExitWindows.LogOff, 
+                          WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
+        }
+
+        public static void Restart()
+        {
+            GetShutdownPrivileges();
+            ExitWindowsEx(WindowsAPI.ExitWindows.Reboot, 
+                          WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
+        }
+
+        public static void Shutdown()
+        {
+            GetShutdownPrivileges();
+            ExitWindowsEx(WindowsAPI.ExitWindows.ShutDown, 
+                          WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ExitWindowsEx(ExitWindows uFlags, 
+                                                  ShutdownReason dwReason);
+
+        [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+        private static extern bool AdjustTokenPrivileges(IntPtr htok, 
+                                                          bool disall, 
+                                                          ref TokPriv1Luid newst, 
+                                                          int len, 
+                                                          IntPtr prev, 
+                                                          IntPtr relen);
+
+        [DllImport("kernel32.dll", ExactSpelling = true)]
+        private static extern IntPtr GetCurrentProcess();
+
+        [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+        private static extern bool OpenProcessToken(IntPtr h, 
+                                                     int acc, 
+                                                     ref IntPtr phtok);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool LookupPrivilegeValue(string host, 
+                                                         string name,
+                                                         ref long pluid);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetDesktopWindow();
+        
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetShellWindow();
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern int GetWindowRect(IntPtr hwnd, out RECT rc);
+
+        private static void GetShutdownPrivileges()
+        {
+            TokPriv1Luid tp;
+            IntPtr hproc = GetCurrentProcess();
+            IntPtr htok = IntPtr.Zero;
+            OpenProcessToken(hproc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, ref htok);
+            tp.Count = 1;
+            tp.Luid = 0;
+            tp.Attr = SE_PRIVILEGE_ENABLED;
+            LookupPrivilegeValue(null, SE_SHUTDOWN_NAME, ref tp.Luid);
+            AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+        }
+
         [Flags]
-        public enum ExitWindows : uint
+        private enum ExitWindows : uint
         {
             // ONE of the following five:
             LogOff = 0x00,
@@ -103,7 +123,7 @@ namespace EasyShutdown
         }
 
         [Flags]
-        public enum ShutdownReason : uint
+        private enum ShutdownReason : uint
         {
             MajorApplication = 0x00040000,
             MajorHardware = 0x00010000,
@@ -146,7 +166,7 @@ namespace EasyShutdown
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        public struct TokPriv1Luid
+        private struct TokPriv1Luid
         {
             public int Count;
             public long Luid;
@@ -154,7 +174,7 @@ namespace EasyShutdown
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
+        private struct RECT
         {
             public int Left;
             public int Top;

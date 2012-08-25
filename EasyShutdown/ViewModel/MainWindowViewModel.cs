@@ -114,7 +114,7 @@ namespace EasyShutdown.ViewModel
             MessageBoxResult answer = AutoConfirmDialog.Show("Do you want to log off?", "EasyShutdown", "Log off", TIMEOUT);
             if (answer == MessageBoxResult.Yes)
             {
-                WindowsAPI.ExitWindowsEx(WindowsAPI.ExitWindows.LogOff, WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
+                WindowsAPI.Logoff();
             }
         }
 
@@ -126,8 +126,7 @@ namespace EasyShutdown.ViewModel
             MessageBoxResult answer = AutoConfirmDialog.Show("Do you want to restart your computer?", "EasyShutdown", "Restart", TIMEOUT);
             if (answer == MessageBoxResult.Yes)
             {
-                WindowsAPI.GetShutdownPrivileges();
-                WindowsAPI.ExitWindowsEx(WindowsAPI.ExitWindows.Reboot, WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
+                WindowsAPI.Restart();
             }
         }
 
@@ -139,8 +138,7 @@ namespace EasyShutdown.ViewModel
             MessageBoxResult answer = AutoConfirmDialog.Show("Do you want to shut down your computer?", "EasyShutdown", "Shut down", TIMEOUT);
             if (answer == MessageBoxResult.Yes)
             {
-                WindowsAPI.GetShutdownPrivileges();
-                WindowsAPI.ExitWindowsEx(WindowsAPI.ExitWindows.ShutDown, WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
+                WindowsAPI.Shutdown();
             }
         }
     }
