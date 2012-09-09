@@ -1,9 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyShutdown", "EasyShutdown\EasyShutdown.csproj", "{E2CFD921-1E1D-4525-8044-77AE8D066693}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "EasyShutdownInstaller", "EasyShutdownInstaller\EasyShutdownInstaller.vdproj", "{033D9422-E463-4023-AF46-1E5FD9F04507}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +13,6 @@ Global
 		{E2CFD921-1E1D-4525-8044-77AE8D066693}.Debug|x86.Build.0 = Debug|x86
 		{E2CFD921-1E1D-4525-8044-77AE8D066693}.Release|x86.ActiveCfg = Release|x86
 		{E2CFD921-1E1D-4525-8044-77AE8D066693}.Release|x86.Build.0 = Release|x86
-		{033D9422-E463-4023-AF46-1E5FD9F04507}.Debug|x86.ActiveCfg = Debug
-		{033D9422-E463-4023-AF46-1E5FD9F04507}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

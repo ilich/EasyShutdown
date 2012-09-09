@@ -54,8 +54,11 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Border CornerRadius="90" Background="White">
-                            <Image x:Name="menuButton" Source="/Images/MenuDown.png" Height="26" Width="26" />    
+                        <Border x:Name="circularBorder" 
+                                CornerRadius="{Binding Path=ActualHeight, ElementName=circularBorder}" 
+                                Width="{Binding Path=ActualHeight, ElementName=circularBorder}"
+                                Background="White">
+                            <Image x:Name="menuButton" Source="/Images/MenuDown.png" Height="26" Width="26" />
                         </Border>
 
                         <ControlTemplate.Triggers>
