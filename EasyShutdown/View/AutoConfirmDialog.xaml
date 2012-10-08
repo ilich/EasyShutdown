@@ -17,11 +17,6 @@
         <Style x:Key="TimeLeftLabel" TargetType="{x:Type Label}">
             <Setter Property="Margin" Value="5" />
         </Style>
-        <Style x:Key="ActionButton" TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="8" />
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="Width" Value="80" />
-        </Style>
         <Style x:Key="ActionButtonsStackPanel" TargetType="{x:Type StackPanel}">
             <Setter Property="Orientation" Value="Horizontal" />
             <Setter Property="FlowDirection" Value="RightToLeft" />

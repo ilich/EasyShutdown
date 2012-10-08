@@ -2,15 +2,31 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using EasyShutdown.Properties;
 using Microsoft.Practices.Prism.Commands;
+using EasyShutdown.Properties;
 using EasyShutdown.View;
+using EasyShutdown.Scheduler;
 
 namespace EasyShutdown.ViewModel
 {
     class MainWindowViewModel : BaseViewModal
     {
         private const int TIMEOUT = 10;
+
+        public MainWindowViewModel(Window view)
+            : base(view)
+        {
+            ExitCommand = new DelegateCommand(Exit);
+            CheckFullScreenModeCommand = new DelegateCommand(CheckFullScreenMode);
+            MoveWindowCommand = new DelegateCommand(MoveWindow);
+            RestoreWindowPositionCommand = new DelegateCommand(RestoreWindowPosition);
+            SaveWindowPositionCommand = new DelegateCommand(SaveWindowPosition);
+            ShowHideMenuCommand = new DelegateCommand<Border>(ShowHideMenu);
+            LogoffCommand = new DelegateCommand(Logoff);
+            RestartCommand = new DelegateCommand(Restart);
+            ShutdownCommand = new DelegateCommand(Shutdown);
+            OpenSchedulerCommand = new DelegateCommand(OpenScheduler);
+        }
 
         public string Username
         {
@@ -25,6 +41,8 @@ namespace EasyShutdown.ViewModel
 
         public ICommand ShowHideMenuCommand { get; private set; }
 
+        public ICommand OpenSchedulerCommand { get; private set; }
+
         public ICommand ExitCommand { get; private set; }
 
         public ICommand MoveWindowCommand { get; private set; }
@@ -35,18 +53,12 @@ namespace EasyShutdown.ViewModel
 
         public ICommand CheckFullScreenModeCommand { get; private set; }
 
-        public MainWindowViewModel(Window view)
-            : base(view)
+        private void OpenScheduler()
         {
-            ExitCommand = new DelegateCommand(Exit);
-            CheckFullScreenModeCommand = new DelegateCommand(CheckFullScreenMode);
-            MoveWindowCommand = new DelegateCommand(MoveWindow);
-            RestoreWindowPositionCommand = new DelegateCommand(RestoreWindowPosition);
-            SaveWindowPositionCommand = new DelegateCommand(SaveWindowPosition);
-            ShowHideMenuCommand = new DelegateCommand<Border>(ShowHideMenu);
-            LogoffCommand = new DelegateCommand(Logoff);
-            RestartCommand = new DelegateCommand(Restart);
-            ShutdownCommand = new DelegateCommand(Shutdown);
+            SchedulerDialog view = new SchedulerDialog();
+            SchedulerViewModel viewModel = new SchedulerViewModel(view, new SchedulerSettingsManager());
+            view.DataContext = viewModel;
+            view.ShowDialog();
         }
 
         private void ShowHideMenu(Border menu)

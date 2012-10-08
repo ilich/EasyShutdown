@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:EasyShutdown"
-        Title="Easy Shutdown for Windows 8" Height="150" Width="300"
+        Title="Easy Shutdown for Windows 8" Height="205" Width="300"
         WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" 
         ShowInTaskbar="False" Topmost="True">
 
@@ -54,7 +54,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Border CornerRadius="90" Background="White">
+                        <Border CornerRadius="26" Background="White">
                             <Image x:Name="menuButton" Source="/Images/MenuDown.png" Height="26" Width="26" />    
                         </Border>
 
@@ -77,7 +77,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Image Source="/Images/Logoff.png" />
+                        <Image Source="/Images/Logoff.png" Height="26" Width="26" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -89,7 +89,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Image Source="/Images/Restart.png" />
+                        <Image Source="/Images/Restart.png" Height="26" Width="26" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -101,7 +101,19 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Image Source="/Images/Shutdown.png" />
+                        <Image Source="/Images/Shutdown.png" Height="26" Width="26" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SettingsButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Image Source="/Images/Settings.png" Height="26" Width="26" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -134,6 +146,7 @@
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal">
@@ -149,6 +162,15 @@
 
                 <Button Grid.Row="3" Style="{StaticResource ShutdownButtonStyle}" Command="{Binding ShutdownCommand}" />
                 <Label Grid.Row="3" Grid.Column="1">Shut down</Label>
+
+                <StackPanel Grid.Row="4" Orientation="Vertical">
+                    <Separator />
+                    <Button Style="{StaticResource SettingsButtonStyle}" Command="{Binding OpenSchedulerCommand}" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Vertical">
+                    <Separator />
+                    <Label>Scheduler settings</Label>    
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

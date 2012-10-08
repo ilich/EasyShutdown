@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Windows;
+using Microsoft.Practices.Prism.ViewModel;
 
 namespace EasyShutdown.ViewModel
 {
-    abstract class BaseViewModal
+    abstract class BaseViewModal : NotificationObject
     {
-        public Window View { get; set; }
-
         public BaseViewModal(Window view)
         {
-            if (view == null)
-            {
-                throw new ArgumentNullException("view");
-            }
-
             View = view;
         }
+
+        internal BaseViewModal()
+        {
+            // Special constructor for unit-tests
+        }
+
+        public Window View { get; set; }
 
         protected void ValidateState()
         {
             if (View == null)
             {
-                throw new NullReferenceException("View is not set.");
+                throw new InvalidOperationException("View is not set.");
             }
         }
     }

@@ -19,7 +19,7 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -29,7 +29,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,6 +41,12 @@
     <ApplicationIcon>Images\Program.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="C5">
+      <HintPath>..\packages\Quartz.2.0.1\lib\net40-client\C5.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Expression.Interactions">
       <HintPath>..\packages\Prism.4.1.0.0\lib\NET40\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
@@ -52,6 +58,9 @@
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartz">
+      <HintPath>..\packages\Quartz.2.0.1\lib\net40-client\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -69,17 +78,30 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit.Extended">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.1.6.0\lib\net40\WPFToolkit.Extended.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Scheduler\ISchedulerSettings.cs" />
+    <Compile Include="Scheduler\ScheduledAction.cs" />
+    <Compile Include="Scheduler\JobRunner.cs" />
+    <Compile Include="Scheduler\SchedulerSettings.cs" />
+    <Compile Include="Scheduler\SchedulerSettingsManager.cs" />
+    <Compile Include="Scheduler\ScheduleType.cs" />
+    <Compile Include="ViewModel\SchedulerViewModel.cs" />
     <Compile Include="View\AutoConfirmDialog.xaml.cs">
       <DependentUpon>AutoConfirmDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\AutoConfirmDialogViewModal.cs" />
     <Compile Include="ViewModel\BaseViewModal.cs" />
+    <Compile Include="View\SchedulerDialog.xaml.cs">
+      <DependentUpon>SchedulerDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WindowsAPI.cs" />
     <Page Include="View\AutoConfirmDialog.xaml">
       <SubType>Designer</SubType>
@@ -97,6 +119,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\SchedulerDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
@@ -149,7 +175,9 @@
   <ItemGroup>
     <Resource Include="Images\Warning.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\Settings.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -13,19 +13,11 @@ namespace EasyShutdown.ViewModel
 
         private DispatcherTimer timer;
 
-        public ICommand YesCommand { get; private set; }
-
-        public ICommand NoCommad { get; private set; }
-
-        public ICommand TimerCommand { get; private set; }
-
-        public ICommand ClosingWindowCommand { get; private set; }
-
-        public AutoConfirmDialogViewModal(Window view, 
-                                          DispatcherTimer timer, 
+        public AutoConfirmDialogViewModal(Window view,
+                                          DispatcherTimer timer,
                                           string action = null,
                                           int seconds = 0)
-            :base(view)
+            : base(view)
         {
             this.timer = timer;
             this.seconds = seconds;
@@ -36,6 +28,14 @@ namespace EasyShutdown.ViewModel
             TimerCommand = new DelegateCommand(OnTimer);
             ClosingWindowCommand = new DelegateCommand(OnClosingWindow);
         }
+
+        public ICommand YesCommand { get; private set; }
+
+        public ICommand NoCommad { get; private set; }
+
+        public ICommand TimerCommand { get; private set; }
+
+        public ICommand ClosingWindowCommand { get; private set; }
         
         public string GetTimerText()
         {
