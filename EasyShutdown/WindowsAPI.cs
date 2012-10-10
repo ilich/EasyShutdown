@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyShutdown.View;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -6,6 +7,8 @@ namespace EasyShutdown
 {
     static class WindowsAPI
     {
+        private const int TIMEOUT = 10;
+
         private const int SE_PRIVILEGE_ENABLED = 0x00000002;
         private const int TOKEN_QUERY = 0x00000008;
         private const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
@@ -37,24 +40,53 @@ namespace EasyShutdown
                         activeWndWidth == SystemParameters.PrimaryScreenWidth;
         }
 
-        public static void Logoff()
+        public static void LogOut(bool askToConfirm)
         {
+            if (!CanExecute(askToConfirm, "Do you want to log off?", "Log off"))
+            {
+                return;
+            }
+
             ExitWindowsEx(WindowsAPI.ExitWindows.LogOff, 
                           WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
         }
 
-        public static void Restart()
+        public static void Restart(bool askToConfirm)
         {
+            if (!CanExecute(askToConfirm, "Do you want to restart your computer?", "Restart"))
+            {
+                return;
+            }
+
             GetShutdownPrivileges();
             ExitWindowsEx(WindowsAPI.ExitWindows.Reboot, 
                           WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
         }
 
-        public static void Shutdown()
+        public static void Shutdown(bool askToConfirm)
         {
+            if (!CanExecute(askToConfirm, "Do you want to shut down your computer?", "Shut down"))
+            {
+                return;
+            }
+
             GetShutdownPrivileges();
             ExitWindowsEx(WindowsAPI.ExitWindows.ShutDown, 
                           WindowsAPI.ShutdownReason.MajorOther | WindowsAPI.ShutdownReason.MinorOther);
+        }
+
+        private static bool CanExecute(bool askToConfirm, string confirmaiton, string action)
+        {
+            if (askToConfirm)
+            {
+                MessageBoxResult answer = AutoConfirmDialog.Show(confirmaiton, "EasyShutdown", action, TIMEOUT);
+                if (answer != MessageBoxResult.Yes)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         [DllImport("user32.dll", SetLastError = true)]

@@ -11,8 +11,6 @@ namespace EasyShutdown.ViewModel
 {
     class MainWindowViewModel : BaseViewModal
     {
-        private const int TIMEOUT = 10;
-
         public MainWindowViewModel(Window view)
             : base(view)
         {
@@ -122,36 +120,21 @@ namespace EasyShutdown.ViewModel
         {
             ValidateState();
             SaveWindowPosition();
-
-            MessageBoxResult answer = AutoConfirmDialog.Show("Do you want to log off?", "EasyShutdown", "Log off", TIMEOUT);
-            if (answer == MessageBoxResult.Yes)
-            {
-                WindowsAPI.Logoff();
-            }
+            WindowsAPI.LogOut(true);
         }
 
         private void Restart()
         {
             ValidateState();
             SaveWindowPosition();
-
-            MessageBoxResult answer = AutoConfirmDialog.Show("Do you want to restart your computer?", "EasyShutdown", "Restart", TIMEOUT);
-            if (answer == MessageBoxResult.Yes)
-            {
-                WindowsAPI.Restart();
-            }
+            WindowsAPI.Restart(true);
         }
 
         private void Shutdown()
         {
             ValidateState();
             SaveWindowPosition();
-
-            MessageBoxResult answer = AutoConfirmDialog.Show("Do you want to shut down your computer?", "EasyShutdown", "Shut down", TIMEOUT);
-            if (answer == MessageBoxResult.Yes)
-            {
-                WindowsAPI.Shutdown();
-            }
+            WindowsAPI.Shutdown(true);
         }
     }
 }

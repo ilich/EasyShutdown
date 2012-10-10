@@ -387,6 +387,7 @@ namespace EasyShutdown.ViewModel
             }
 
             SaveSettings();
+            ((App)Application.Current).Scheduler.Restart();
             View.Close();
         }
 
